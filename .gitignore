@@ -1,0 +1,27 @@
+### Maven ###
+target/
+
+### IntelliJ IDEA ###
+.idea/
+out/
+*.iml
+*.iws
+*.ipr
+
+### Mac OS ###
+.DS_Store
+
+### SQLite ###
+*.sqlite
+*.sqlite3
+*.db
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+*.db-journal
+*.db-wal
+*.db-shm
+
+### Local environment ###
+.env
+.env.local
