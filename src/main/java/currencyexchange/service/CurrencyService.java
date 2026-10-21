@@ -34,4 +34,15 @@ public class CurrencyService {
         }
         return currencyDtos;
     }
+
+    public CurrencyDto findByCode(String code) {
+        Currency currency = currencyDao.findByCode(code);
+
+        CurrencyDto currencyDto = new CurrencyDto(currency.getId(),
+                currency.getCode(),
+                currency.getFullName(),
+                currency.getSign());
+
+        return currencyDto;
+    }
 }
