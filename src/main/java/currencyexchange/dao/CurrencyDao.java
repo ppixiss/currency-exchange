@@ -11,8 +11,12 @@ import java.util.List;
 public class CurrencyDao {
     private static final CurrencyDao INSTANCE = new CurrencyDao();
     private static final String FIND_ALL_SQL = "SELECT id, code, full_name, sign FROM currencies";
+    public static final String FIND_BY_CODE_SQL = FIND_ALL_SQL + """
+             WHERE code = ?
+            """;
 
-    private CurrencyDao(){}
+    private CurrencyDao() {
+    }
 
     public static CurrencyDao getInstance() {
         return INSTANCE;
@@ -39,4 +43,24 @@ public class CurrencyDao {
         }
     }
 
+    public Currency findByCode(String code) {
+        try (var connection = ConnectionManager.open();
+             var preparedStatement = connection.prepareStatement(FIND_BY_CODE_SQL)) {
+
+            preparedStatement.setString(1, code);
+            var resultSet = preparedStatement.executeQuery();
+
+            Currency currency = null;
+
+            if (resultSet.next()) {
+                currency = new Currency(resultSet.getInt("id"),
+                        resultSet.getString("code"),
+                        resultSet.getString("full_name"),
+                        resultSet.getString("sign"));
+            }
+            return currency;
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
 }
