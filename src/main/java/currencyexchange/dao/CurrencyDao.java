@@ -5,15 +5,18 @@ import currencyexchange.exceptoin.DaoException;
 import currencyexchange.util.ConnectionManager;
 
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CurrencyDao {
     private static final CurrencyDao INSTANCE = new CurrencyDao();
     private static final String FIND_ALL_SQL = "SELECT id, code, full_name, sign FROM currencies";
-    public static final String FIND_BY_CODE_SQL = FIND_ALL_SQL + """
+    private static final String FIND_BY_CODE_SQL = FIND_ALL_SQL + """
              WHERE code = ?
             """;
+    private static final String ADD_NEW_CURRENCY_SQL = "INSERT INTO currencies (code, full_name, sign)" +
+            " VALUES (?, ?, ?)";
 
     private CurrencyDao() {
     }
@@ -50,7 +53,7 @@ public class CurrencyDao {
             preparedStatement.setString(1, code);
             var resultSet = preparedStatement.executeQuery();
 
-            Currency currency = null;
+            Currency currency = null; //todo а что если вернет null подумать
 
             if (resultSet.next()) {
                 currency = new Currency(resultSet.getInt("id"),
@@ -63,4 +66,31 @@ public class CurrencyDao {
             throw new DaoException(e);
         }
     }
+
+    public Currency add(String code, String fullName, String sign) {
+        try (var connection = ConnectionManager.open();
+             var preparedStatement = connection.prepareStatement(ADD_NEW_CURRENCY_SQL, Statement.RETURN_GENERATED_KEYS)) {
+
+            preparedStatement.setString(1, code);
+            preparedStatement.setString(2, fullName);
+            preparedStatement.setString(3, sign);
+
+            preparedStatement.executeUpdate();
+            var key = preparedStatement.getGeneratedKeys();
+
+            Currency currency = null; //todo а что если вернет null подумать
+
+            if (key.next()) {
+                int id = key.getInt(1);
+                currency = new Currency(id, code, fullName, sign);
+            }
+
+            return currency;
+
+        } catch (SQLException e) {
+            throw new DaoException(e);
+        }
+    }
+
+    //todo: есть части кода, которые дублируются, исправить
 }

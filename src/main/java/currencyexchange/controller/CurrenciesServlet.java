@@ -27,5 +27,21 @@ public class CurrenciesServlet extends HttpServlet {
         String jsonResponse = objectMapper.writeValueAsString(currencyDtos); //Сериализируем список Java-объектов в json и сохраняем в строку
         response.getWriter().write(jsonResponse); //Записываем эту строку в тело http ответа
     }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("application/json;charset=UTF-8");
+
+        String code = request.getParameter("code");
+        String fullName = request.getParameter("fullName");
+        String sign = request.getParameter("sign");
+
+        CurrencyDto currencyDto = currencyService.add(code, fullName, sign);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String jsonResponse = objectMapper.writeValueAsString(currencyDto);
+        response.getWriter().write(jsonResponse);
+        //todo: нормально ли передавать так поля? подумать
+    }
 }
 

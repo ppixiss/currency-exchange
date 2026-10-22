@@ -38,11 +38,18 @@ public class CurrencyService {
     public CurrencyDto findByCode(String code) {
         Currency currency = currencyDao.findByCode(code);
 
-        CurrencyDto currencyDto = new CurrencyDto(currency.getId(),
+        return new CurrencyDto(currency.getId(), //todo вынести общий метод "создание валюты"
                 currency.getCode(),
                 currency.getFullName(),
                 currency.getSign());
+    }
 
-        return currencyDto;
+    public CurrencyDto add(String code, String fullName, String sign) {
+        Currency currency = currencyDao.add(code, fullName, sign);
+
+        return new CurrencyDto(currency.getId(),
+                currency.getCode(),
+                currency.getFullName(),
+                currency.getSign());
     }
 }
