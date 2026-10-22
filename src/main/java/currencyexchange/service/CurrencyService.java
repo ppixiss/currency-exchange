@@ -24,12 +24,7 @@ public class CurrencyService {
         List<CurrencyDto> currencyDtos = new ArrayList<>();
 
         for (Currency currency : currencies) {
-            CurrencyDto currencyDto = new CurrencyDto(
-                    currency.getId(),
-                    currency.getCode(),
-                    currency.getFullName(),
-                    currency.getSign()
-            );
+            CurrencyDto currencyDto = CurrencyService.createDto(currency);
             currencyDtos.add(currencyDto);
         }
         return currencyDtos;
@@ -38,16 +33,18 @@ public class CurrencyService {
     public CurrencyDto findByCode(String code) {
         Currency currency = currencyDao.findByCode(code);
 
-        return new CurrencyDto(currency.getId(), //todo вынести общий метод "создание валюты"
-                currency.getCode(),
-                currency.getFullName(),
-                currency.getSign());
+        return CurrencyService.createDto(currency);
     }
 
     public CurrencyDto add(String code, String fullName, String sign) {
         Currency currency = currencyDao.add(code, fullName, sign);
 
-        return new CurrencyDto(currency.getId(),
+        return CurrencyService.createDto(currency);
+    }
+
+    private static CurrencyDto createDto(Currency currency) {
+        return new CurrencyDto(
+                currency.getId(),
                 currency.getCode(),
                 currency.getFullName(),
                 currency.getSign());
