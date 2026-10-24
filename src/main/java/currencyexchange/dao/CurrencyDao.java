@@ -27,8 +27,8 @@ public class CurrencyDao {
 
     public List<Currency> findAll() {
         try (var connection = ConnectionManager.open(); //Открываем соединение
-             var preparedStatement = connection.prepareStatement(FIND_ALL_SQL); // Создаем переменную для управления подготовленным запросом
-             var resultSet = preparedStatement.executeQuery()) { //Выполняем запрос и создаем переменную для получения результата его выполнения
+             var pStatement = connection.prepareStatement(FIND_ALL_SQL); // Создаем переменную для управления подготовленным запросом
+             var resultSet = pStatement.executeQuery()) { //Выполняем запрос и создаем переменную для получения результата его выполнения
 
             List<Currency> currencies = new ArrayList<>();
             while (resultSet.next()) { //Сначала находимся перед пустой строкой, переходим на следующую и возвращаем булиан
@@ -48,10 +48,10 @@ public class CurrencyDao {
 
     public Currency findByCode(String code) {
         try (var connection = ConnectionManager.open();
-             var preparedStatement = connection.prepareStatement(FIND_BY_CODE_SQL)) {
+             var pStatement = connection.prepareStatement(FIND_BY_CODE_SQL)) {
 
-            preparedStatement.setString(1, code);
-            var resultSet = preparedStatement.executeQuery();
+            pStatement.setString(1, code);
+            var resultSet = pStatement.executeQuery();
 
             Currency currency = null; //todo а что если вернет null подумать
 
@@ -69,14 +69,14 @@ public class CurrencyDao {
 
     public Currency add(String code, String fullName, String sign) {
         try (var connection = ConnectionManager.open();
-             var preparedStatement = connection.prepareStatement(ADD_NEW_CURRENCY_SQL, Statement.RETURN_GENERATED_KEYS)) {
+             var pStatement = connection.prepareStatement(ADD_NEW_CURRENCY_SQL, Statement.RETURN_GENERATED_KEYS)) {
 
-            preparedStatement.setString(1, code);
-            preparedStatement.setString(2, fullName);
-            preparedStatement.setString(3, sign);
+            pStatement.setString(1, code);
+            pStatement.setString(2, fullName);
+            pStatement.setString(3, sign);
 
-            preparedStatement.executeUpdate();
-            var key = preparedStatement.getGeneratedKeys();
+            pStatement.executeUpdate();
+            var key = pStatement.getGeneratedKeys();
 
             Currency currency = null; //todo а что если вернет null подумать
 
