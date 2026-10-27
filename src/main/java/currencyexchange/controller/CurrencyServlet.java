@@ -2,6 +2,7 @@ package currencyexchange.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import currencyexchange.dto.CurrencyDto;
+import currencyexchange.exceptoin.CurrencyNotFoundException;
 import currencyexchange.service.CurrencyService;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,13 +20,17 @@ public class CurrencyServlet extends HttpServlet {
 
         String pathInfo = request.getPathInfo();
 
-        if (pathInfo != null && pathInfo.length() > 1){ //todo а что если некорректный путь? подумать
+        if (pathInfo != null && pathInfo.length() > 1){
             String code = pathInfo.substring(1);
-            CurrencyDto currencyDto = currencyService.findByCode(code);
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            String jsonResponse = objectMapper.writeValueAsString(currencyDto);
-            response.getWriter().write(jsonResponse);
+            try {
+                CurrencyDto currencyDto = currencyService.findByCode(code);
+                ObjectMapper objectMapper = new ObjectMapper();
+                String jsonResponse = objectMapper.writeValueAsString(currencyDto);
+                response.getWriter().write(jsonResponse);
+            } catch (CurrencyNotFoundException e) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            }
         }
     }
 }

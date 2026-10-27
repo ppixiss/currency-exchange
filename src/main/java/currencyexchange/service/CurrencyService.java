@@ -3,6 +3,7 @@ package currencyexchange.service;
 import currencyexchange.dao.CurrencyDao;
 import currencyexchange.dto.CurrencyDto;
 import currencyexchange.entity.Currency;
+import currencyexchange.exceptoin.CurrencyNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +31,9 @@ public class CurrencyService {
         return currencyDtos;
     }
 
-    public CurrencyDto findByCode(String code) {
-        Currency currency = currencyDao.findByCode(code);
+    public CurrencyDto findByCode(String code) throws CurrencyNotFoundException {
+        Currency currency = currencyDao.findByCode(code)
+                .orElseThrow(() -> new CurrencyNotFoundException("Currency not found: " + code));
 
         return createDto(currency);
     }
@@ -49,4 +51,4 @@ public class CurrencyService {
                 currency.getFullName(),
                 currency.getSign());
     }
-}
+ }

@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CurrencyDao {
     private static final CurrencyDao INSTANCE = new CurrencyDao();
@@ -42,7 +43,7 @@ public class CurrencyDao {
         }
     }
 
-    public Currency findByCode(String code) {
+    public Optional<Currency> findByCode(String code) {
         try (var connection = ConnectionManager.open();
              var pStatement = connection.prepareStatement(FIND_BY_CODE_SQL)) {
 
@@ -54,7 +55,7 @@ public class CurrencyDao {
             if (resultSet.next()) {
                 currency = createCurrency(resultSet);
             }
-            return currency;
+            return Optional.ofNullable(currency);
         } catch (SQLException e) {
             throw new DaoException(e);
         }
@@ -85,7 +86,7 @@ public class CurrencyDao {
         }
     }
 
-    private Currency createCurrency(ResultSet resultSet) throws SQLException {
+    private Currency createCurrency(ResultSet resultSet) throws SQLException { //todo подумать должен ли этот метод находиться в этом классе?
         return new Currency(resultSet.getInt("id"),
                 resultSet.getString("code"),
                 resultSet.getString("full_name"),
