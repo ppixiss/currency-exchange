@@ -4,6 +4,7 @@ import currencyexchange.entity.Currency;
 import currencyexchange.exceptoin.DaoException;
 import currencyexchange.util.ConnectionManager;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -31,14 +32,9 @@ public class CurrencyDao {
              var resultSet = pStatement.executeQuery()) { //Выполняем запрос и создаем переменную для получения результата его выполнения
 
             List<Currency> currencies = new ArrayList<>();
-            while (resultSet.next()) { //Сначала находимся перед пустой строкой, переходим на следующую и возвращаем булиан
-                Currency currency = new Currency(); //Создаем entity валюты
 
-                currency.setId(resultSet.getInt("id")); //RS обращается к столбцу id в тек. строке, записываем id в сущность
-                currency.setCode(resultSet.getString("code"));
-                currency.setFullName(resultSet.getString("full_name"));
-                currency.setSign(resultSet.getString("sign"));
-                currencies.add(currency);
+            while (resultSet.next()) {
+                currencies.add(createCurrency(resultSet));
             }
             return currencies;
         } catch (SQLException e) { //Перехватывает исключение SQLException
@@ -56,10 +52,7 @@ public class CurrencyDao {
             Currency currency = null; //todo а что если вернет null подумать
 
             if (resultSet.next()) {
-                currency = new Currency(resultSet.getInt("id"),
-                        resultSet.getString("code"),
-                        resultSet.getString("full_name"),
-                        resultSet.getString("sign"));
+                currency = createCurrency(resultSet);
             }
             return currency;
         } catch (SQLException e) {
@@ -92,5 +85,10 @@ public class CurrencyDao {
         }
     }
 
-    //todo: есть части кода, которые дублируются, исправить
+    private Currency createCurrency(ResultSet resultSet) throws SQLException {
+        return new Currency(resultSet.getInt("id"),
+                resultSet.getString("code"),
+                resultSet.getString("full_name"),
+                resultSet.getString("sign"));
+    }
 }
