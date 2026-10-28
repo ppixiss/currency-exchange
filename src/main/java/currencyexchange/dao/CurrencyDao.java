@@ -50,7 +50,7 @@ public class CurrencyDao {
             pStatement.setString(1, code);
             var resultSet = pStatement.executeQuery();
 
-            Currency currency = null; //todo а что если вернет null подумать
+            Currency currency = null;
 
             if (resultSet.next()) {
                 currency = createCurrency(resultSet);
@@ -72,13 +72,14 @@ public class CurrencyDao {
             pStatement.executeUpdate();
             var key = pStatement.getGeneratedKeys();
 
-            Currency currency = null; //todo а что если вернет null подумать
+            Currency currency = null;
 
-            if (key.next()) {
-                int id = key.getInt(1);
-                currency = new Currency(id, code, fullName, sign);
+            if (!key.next()) {
+                throw new DaoException("Failed to retrieve generated key");
             }
 
+            int id = key.getInt(1);
+            currency = new Currency(id, code, fullName, sign);
             return currency;
 
         } catch (SQLException e) {
