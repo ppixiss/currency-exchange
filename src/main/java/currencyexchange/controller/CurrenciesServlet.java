@@ -2,6 +2,7 @@ package currencyexchange.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import currencyexchange.dto.CurrencyDto;
+import currencyexchange.exceptoin.CurrencyAlreadyExistsException;
 import currencyexchange.service.CurrencyService;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -32,16 +33,19 @@ public class CurrenciesServlet extends HttpServlet {
         response.setContentType("application/json;charset=UTF-8");
 
         String code = request.getParameter("code");
-        String fullName = request.getParameter("fullName");
+        String fullName = request.getParameter("full_name");
         String sign = request.getParameter("sign");
 
-        CurrencyDto currencyDto = currencyService.add(code, fullName, sign);
+        try {
+            CurrencyDto currencyDto = currencyService.add(code, fullName, sign);
 
-        ObjectMapper objectMapper = new ObjectMapper();
+            ObjectMapper objectMapper = new ObjectMapper();
 
-        String jsonResponse = objectMapper.writeValueAsString(currencyDto);
-        response.getWriter().write(jsonResponse);
-        //todo: нормально ли передавать так поля? подумать
+            String jsonResponse = objectMapper.writeValueAsString(currencyDto);
+            response.getWriter().write(jsonResponse);
+        } catch (CurrencyAlreadyExistsException e) {
+            response.sendError(HttpServletResponse.SC_CONFLICT, e.getMessage());
+        }
     }
 }
 

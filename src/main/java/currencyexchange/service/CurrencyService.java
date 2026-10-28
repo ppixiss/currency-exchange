@@ -3,6 +3,7 @@ package currencyexchange.service;
 import currencyexchange.dao.CurrencyDao;
 import currencyexchange.dto.CurrencyDto;
 import currencyexchange.entity.Currency;
+import currencyexchange.exceptoin.CurrencyAlreadyExistsException;
 import currencyexchange.exceptoin.CurrencyNotFoundException;
 import currencyexchange.mapper.CurrencyDtoMapper;
 
@@ -41,16 +42,17 @@ public class CurrencyService {
     }
 
     public CurrencyDto add(String code, String fullName, String sign) {
+        if (isCodeNotUnique(code)) {
+            throw new CurrencyAlreadyExistsException("Currency already exists: " + code);
+        }
         Currency currency = currencyDao.add(code, fullName, sign);
 
         return CurrencyDtoMapper.map(currency);
     }
 
-    private CurrencyDto createDto(Currency currency) {
-        return new CurrencyDto(
-                currency.getId(),
-                currency.getCode(),
-                currency.getFullName(),
-                currency.getSign());
+    private boolean isCodeNotUnique(String code) {
+        Optional<Currency> currency = currencyDao.findByCode(code);
+
+        return currency.isPresent();
     }
  }
