@@ -1,8 +1,14 @@
 package currencyexchange.exceptoin;
 
-public class DaoException extends RuntimeException{
+public class DaoException extends RuntimeException {
 
     public DaoException(Throwable throwable) {
         super(throwable);
     }
+
+    public DaoException(String message) {
+        super(message);
+    }
+
+
 }

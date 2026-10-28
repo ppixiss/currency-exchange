@@ -29,7 +29,7 @@ public class CurrencyServlet extends HttpServlet {
                 String jsonResponse = objectMapper.writeValueAsString(currencyDto);
                 response.getWriter().write(jsonResponse);
             } catch (CurrencyNotFoundException e) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, e.getMessage());
             }
         }
     }
