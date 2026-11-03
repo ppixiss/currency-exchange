@@ -20,9 +20,6 @@ public class CurrencyDao {
     private static final String ADD_NEW_CURRENCY_SQL = "INSERT INTO currencies (code, full_name, sign)" +
             " VALUES (?, ?, ?)";
 
-    private CurrencyDao() {
-    }
-
     public static CurrencyDao getInstance() {
         return INSTANCE;
     }
@@ -87,7 +84,10 @@ public class CurrencyDao {
         }
     }
 
-    private Currency createCurrency(ResultSet resultSet) throws SQLException { //todo подумать должен ли этот метод находиться в этом классе?
+    private CurrencyDao() {
+    }
+
+    private Currency createCurrency(ResultSet resultSet) throws SQLException { //todo подумать должен ли этот метод находиться в этом классе? или в маппере?
         return new Currency(resultSet.getInt("id"),
                 resultSet.getString("code"),
                 resultSet.getString("full_name"),

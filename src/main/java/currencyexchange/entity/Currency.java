@@ -6,13 +6,13 @@ public class Currency {
 
     private int id;
     private String code;
-    private String fullName;
+    private String name;
     private String sign;
 
     public Currency(int id, String code, String fullName, String sign) {
         this.id = id;
         this.code = code;
-        this.fullName = fullName;
+        this.name = fullName;
         this.sign = sign;
     }
 
@@ -28,7 +28,7 @@ public class Currency {
     }
 
     public String getFullName() {
-        return fullName;
+        return name;
     }
 
     public String getSign() {
@@ -44,7 +44,7 @@ public class Currency {
     }
 
     public void setFullName(String fullName) {
-        this.fullName = fullName;
+        this.name = fullName;
     }
 
     public void setSign(String sign) {
@@ -56,7 +56,7 @@ public class Currency {
         return "CurrenciesEntity{" +
                 "id=" + id +
                 ", code='" + code + '\'' +
-                ", fullName='" + fullName + '\'' +
+                ", fullName='" + name + '\'' +
                 ", sign='" + sign + '\'' +
                 '}';
     }
@@ -65,11 +65,11 @@ public class Currency {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Currency that = (Currency) o;
-        return id == that.id && Objects.equals(code, that.code) && Objects.equals(fullName, that.fullName) && Objects.equals(sign, that.sign);
+        return id == that.id && Objects.equals(code, that.code) && Objects.equals(name, that.name) && Objects.equals(sign, that.sign);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, code, fullName, sign);
+        return Objects.hash(id, code, name, sign);
     }
 }
