@@ -15,6 +15,7 @@ import java.io.IOException;
 @WebServlet("/currency/*")
 public class CurrencyServlet extends HttpServlet {
     CurrencyService currencyService = CurrencyService.getInstance();
+    ObjectMapper objectMapper = new ObjectMapper();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("application/json;charset=UTF-8");
