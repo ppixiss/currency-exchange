@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import currencyexchange.dto.CurrencyDto;
 import currencyexchange.exceptoin.CurrencyAlreadyExistsException;
 import currencyexchange.service.CurrencyService;
+import currencyexchange.validation.InputValidator;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,14 +17,13 @@ import java.util.List;
 public class CurrenciesServlet extends HttpServlet {
     private final CurrencyService currencyService = CurrencyService.getInstance(); //Создаем переменную CS и
     // записываем ссылку на ед. ссылку на экземпляр этого класса
+    ObjectMapper objectMapper = new ObjectMapper();
 
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response) throws IOException { //todo нормально ли просто в сигнатуре указывать, что может ошибку выбросить?
         response.setContentType("application/json;charset=UTF-8");  //Устанавливаем тип и кодировку ответа
 
         List<CurrencyDto> currencyDtos = currencyService.findAll(); //Вызываем метод findAll у service
-
-        ObjectMapper objectMapper = new ObjectMapper();
 
         String jsonResponse = objectMapper.writeValueAsString(currencyDtos); //Сериализируем список Java-объектов в json и сохраняем в строку
         response.getWriter().write(jsonResponse); //Записываем эту строку в тело http ответа
@@ -33,13 +33,29 @@ public class CurrenciesServlet extends HttpServlet {
         response.setContentType("application/json;charset=UTF-8");
 
         String code = request.getParameter("code");
-        String fullName = request.getParameter("full_name");
+        String name = request.getParameter("full_name");
         String sign = request.getParameter("sign");
 
-        try {
-            CurrencyDto currencyDto = currencyService.add(code, fullName, sign);
+        if (code == null || name == null || sign == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The required field is missing.");
+            return;
+        }
 
-            ObjectMapper objectMapper = new ObjectMapper();
+        code = code.trim().toUpperCase();
+        name = name.trim();
+        sign = sign.trim();
+
+        try {
+            InputValidator.validateCode(code);
+            InputValidator.validateFullName(name);
+            InputValidator.validateSign(sign);
+        } catch (IllegalArgumentException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            return;
+        }
+
+        try {
+            CurrencyDto currencyDto = currencyService.add(code, name, sign);
 
             String jsonResponse = objectMapper.writeValueAsString(currencyDto);
             response.getWriter().write(jsonResponse);
