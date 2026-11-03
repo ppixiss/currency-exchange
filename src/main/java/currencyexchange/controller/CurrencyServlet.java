@@ -21,20 +21,21 @@ public class CurrencyServlet extends HttpServlet {
         String pathInfo = request.getPathInfo();
 
         if (pathInfo == null || pathInfo.length() < 2) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "The currency code is missing");
             return;
         }
 
         String code = pathInfo.substring(1);
 
-        if (!InputValidator.isCodeValid(code)){
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        try {
+            InputValidator.validateCode(code);
+        } catch (IllegalArgumentException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
             return;
         }
 
         try {
             CurrencyDto currencyDto = currencyService.findByCode(code);
-            ObjectMapper objectMapper = new ObjectMapper();
             String jsonResponse = objectMapper.writeValueAsString(currencyDto);
             response.getWriter().write(jsonResponse);
         } catch (CurrencyNotFoundException e) {
