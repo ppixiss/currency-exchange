@@ -17,8 +17,10 @@ public class CurrencyDao {
     private static final String FIND_BY_CODE_SQL = FIND_ALL_SQL + """
              WHERE code = ?
             """;
-    private static final String ADD_NEW_CURRENCY_SQL = "INSERT INTO currencies (code, full_name, sign)" +
-            " VALUES (?, ?, ?)";
+    private static final String ADD_NEW_CURRENCY_SQL = """
+            INSERT INTO currencies (code, full_name, sign)
+            VALUES (?, ?, ?)
+            """;
 
     public static CurrencyDao getInstance() {
         return INSTANCE;
@@ -87,7 +89,7 @@ public class CurrencyDao {
     private CurrencyDao() {
     }
 
-    private Currency createCurrency(ResultSet resultSet) throws SQLException { //todo подумать должен ли этот метод находиться в этом классе? или в маппере?
+    private Currency createCurrency(ResultSet resultSet) throws SQLException {
         return new Currency(resultSet.getInt("id"),
                 resultSet.getString("code"),
                 resultSet.getString("full_name"),

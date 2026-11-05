@@ -15,18 +15,17 @@ import java.util.List;
 
 @WebServlet("/currencies")
 public class CurrenciesServlet extends HttpServlet {
-    private final CurrencyService currencyService = CurrencyService.getInstance(); //Создаем переменную CS и
-    // записываем ссылку на ед. ссылку на экземпляр этого класса
-    ObjectMapper objectMapper = new ObjectMapper();
+    private final CurrencyService currencyService = CurrencyService.getInstance();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     protected void doGet(HttpServletRequest request,
-                         HttpServletResponse response) throws IOException { //todo нормально ли просто в сигнатуре указывать, что может ошибку выбросить?
-        response.setContentType("application/json;charset=UTF-8");  //Устанавливаем тип и кодировку ответа
+                         HttpServletResponse response) throws IOException {
+        response.setContentType("application/json;charset=UTF-8");
 
-        List<CurrencyDto> currencyDtos = currencyService.findAll(); //Вызываем метод findAll у service
+        List<CurrencyDto> currencyDtos = currencyService.findAll();
 
-        String jsonResponse = objectMapper.writeValueAsString(currencyDtos); //Сериализируем список Java-объектов в json и сохраняем в строку
-        response.getWriter().write(jsonResponse); //Записываем эту строку в тело http ответа
+        String jsonResponse = objectMapper.writeValueAsString(currencyDtos);
+        response.getWriter().write(jsonResponse);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
