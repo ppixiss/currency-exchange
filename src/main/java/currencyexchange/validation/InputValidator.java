@@ -11,7 +11,7 @@ public final class InputValidator {
 
     public static void validateCode(String code) {
         if (code.length() != CODE_LENGTH || hasDigit(code) || code.contains(" ")) {
-            throw new IllegalArgumentException("Currency code must consist of exactly 3 Latin letters");
+            throw new IllegalArgumentException("Currency code must consist of exactly 3 Latin letters.");
         }
     }
 
@@ -27,6 +27,12 @@ public final class InputValidator {
         }
     }
 
+    public static void validateRate(String param) {
+        if (hasLetter(param) || param.contains(" ") || param.isBlank() || param.contains("-")) {
+            throw new IllegalArgumentException("The exchange rate must be a positive numerical value.");
+        }
+    }
+
     private static boolean hasDigit(String string) {
         boolean hasDigit = false;
         for (char c : string.toCharArray()) {
@@ -36,6 +42,17 @@ public final class InputValidator {
             }
         }
         return hasDigit;
+    }
+
+    private static boolean hasLetter(String string) {
+        boolean hasLetter = false;
+        for (char c : string.toCharArray()) {
+            if (Character.isLetter(c)) {
+                hasLetter = true;
+                break;
+            }
+        }
+        return hasLetter;
     }
     //todo сделать валидацию на диакритические знаки, на латиницу или русские буквы?
 }
