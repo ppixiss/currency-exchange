@@ -3,6 +3,8 @@ package currencyexchange.service;
 import currencyexchange.dao.ExchangeRateDao;
 import currencyexchange.dto.ExchangeRateDto;
 import currencyexchange.entity.ExchangeRate;
+import currencyexchange.exceptoin.ExchangeRateNotFoundException;
+import currencyexchange.mapper.CurrencyDtoMapper;
 import currencyexchange.mapper.ExchangeRateDtoMapper;
 
 import java.util.ArrayList;
@@ -25,6 +27,12 @@ public class ExchangeRateService {
             rateDtos.add(ExchangeRateDtoMapper.map(rate));
         }
         return rateDtos;
+    }
+
+    public ExchangeRateDto findByPairCodes(String baseCurrencyCode, String targetCurrencyCode) {
+        ExchangeRate exchangeRate = exchangeRateDao.findByPairCodes(baseCurrencyCode, targetCurrencyCode)
+                .orElseThrow(() -> new ExchangeRateNotFoundException("Exchange rate not found: " + baseCurrencyCode + targetCurrencyCode));
+        return ExchangeRateDtoMapper.map(exchangeRate);
     }
 
     private ExchangeRateService() {
